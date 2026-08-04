@@ -25,9 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 
-os.environ[
-    "TRANSFORMERS_CACHE"
-] = "/opt/tritonserver/model_repository/persimmon8b/hf_cache"
+os.environ["HF_HOME"] = "/opt/tritonserver/model_repository/persimmon8b/hf_cache"
 
 import json
 
@@ -62,7 +60,7 @@ class TritonPythonModel:
         self.pipeline = transformers.pipeline(
             "text-generation",
             model=hf_model,
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             tokenizer=self.tokenizer,
             device_map="auto",
         )
@@ -83,8 +81,7 @@ class TritonPythonModel:
     def generate(self, prompt):
         sequences = self.pipeline(
             prompt,
-            max_length=self.max_output_length,
-            pad_token_id=self.tokenizer.eos_token_id,
+            max_new_tokens=self.max_output_length,
         )
 
         output_tensors = []

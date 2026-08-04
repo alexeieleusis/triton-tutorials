@@ -25,7 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 
-os.environ["TRANSFORMERS_CACHE"] = "/opt/tritonserver/model_repository/llama7b/hf-cache"
+os.environ["HF_HOME"] = "/opt/tritonserver/model_repository/llama7b/hf-cache"
 
 import json
 
@@ -70,7 +70,7 @@ class TritonPythonModel:
         self.pipeline = transformers.pipeline(
             "text-generation",
             model=hf_model,
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             tokenizer=self.tokenizer,
             device_map="auto",
             token=private_repo_token,
@@ -95,7 +95,7 @@ class TritonPythonModel:
             top_k=10,
             num_return_sequences=1,
             eos_token_id=self.tokenizer.eos_token_id,
-            max_length=self.max_output_length,
+            max_new_tokens=self.max_output_length,
         )
 
         output_tensors = []
